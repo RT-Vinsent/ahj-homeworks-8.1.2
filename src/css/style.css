@@ -1,0 +1,19 @@
+@font-face {
+    font-family: "OpenSans";
+    font-style: normal;
+    font-weight: 400;
+    src: url("../font/OpenSans-Regular.woff") format("woff");
+  }
+
+  body {
+    position: relative;
+    color: #1b1b1b;
+    font-family: "OpenSans";
+    background: #c1dcdd;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
