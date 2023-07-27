@@ -6,19 +6,10 @@ export default class ChatWS {
     this.url = url;
   }
 
-  getUrlDomain() {
-    const parsedUrl = new URL(this.url);
-
-    const { hostname, port } = parsedUrl;
-
-    // Объединяем хост и порт вместе
-    this.urlDomanPort = `${hostname}:${port}`;
-  }
-
   init(username) {
     this.getUrlDomain();
     console.log(this.urlDomanPort);
-    this.ws = new WebSocket(`ws://${this.urlDomanPort}/ws?login=${username}`);
+    this.ws = new WebSocket(`${this.url}/ws?login=${username}`);
 
     this.ws.addEventListener('open', (e) => {
       console.log(e);

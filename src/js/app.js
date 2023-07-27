@@ -4,7 +4,10 @@ import ChatControl from './ChatControl';
 import ChatWS from './ChatWS';
 import ChatAPI from './ChatAPI';
 
-const urlString = 'http://localhost:7070';
+// const urlString = 'http://localhost:7070';
+const url = 'https://ahj-hw8-1.onrender.com';
+const urlWS = 'ws://ahj-hw8-1.onrender.com';
+// const urlString = `${url}:7070`;
 
 // элемент блока div в DOM
 const hw = document.querySelector('#hw');
@@ -16,10 +19,10 @@ const chatDOM = new ChatDOM();
 chatDOM.bindToDOM(hw);
 
 // создание класса отвечающего за вебсокет
-const chatWS = new ChatWS(urlString);
+const chatWS = new ChatWS(urlWS);
 
 // создание класса отвечающего за API
-const chatAPI = new ChatAPI(urlString);
+const chatAPI = new ChatAPI(url);
 
 // создание класса отвечающего за контроль
 const chatControl = new ChatControl(chatDOM, chatWS, chatAPI);
