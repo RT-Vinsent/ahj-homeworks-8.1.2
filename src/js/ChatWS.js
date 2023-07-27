@@ -7,8 +7,6 @@ export default class ChatWS {
   }
 
   init(username) {
-    this.getUrlDomain();
-    console.log(this.urlDomanPort);
     this.ws = new WebSocket(`${this.url}/ws?login=${username}`);
 
     this.ws.addEventListener('open', (e) => {
