@@ -1,10 +1,8 @@
 export default class chatDOM {
   constructor() {
     this.container = null; // for container
-
-    this.onLoginListeners = [];
-    this.getMessageListeners = [];
-    // this.users = [];
+    this.onLoginListeners = []; /* массив для  callback-а функции onLogin */
+    this.getMessageListeners = []; /* массив для  callback-а функции onSendMessage */
   }
 
   // присваиваем классу контейнер
@@ -40,7 +38,8 @@ export default class chatDOM {
         </div>
       </div>
       <div class="popup">
-        <form class="popup-container">
+        <div class="loading">Backend Loading...</div>
+        <form class="popup-container close">
           <div class="popup-header">Выберите псевдоним</div>
           <input name="name" type="text" class="popup-login"/>
           <button class="popup-button">Продолжить</button>
@@ -54,6 +53,7 @@ export default class chatDOM {
     this.chatSend = this.container.querySelector('.chat-send');
     this.popUp = this.container.querySelector('.popup');
     this.popUpSubmit = this.container.querySelector('.popup-container');
+    this.loading = this.container.querySelector('.loading');
     this.popUpLogin = this.container.querySelector('.popup-login');
 
     this.popUpSubmit.addEventListener('submit', (event) => this.onLogin(event));
@@ -61,8 +61,14 @@ export default class chatDOM {
     this.popUpLogin.addEventListener('focus', () => this.onFocusClear('popUpLogin'));
   }
 
+  /* callback метода onLogin для автоматического вызова в классе ChatControl */
   addOnLoginListeners(callback) { this.onLoginListeners.push(callback); }
 
+  /*
+  *  метод для авторизации
+  *  передаёт значение введёного логина
+  *  в метод onLogin класса ChatControl
+  */
   onLogin(e) {
     e.preventDefault();
     const login = this.popUpLogin.value;
@@ -71,8 +77,14 @@ export default class chatDOM {
     this.onLoginListeners.forEach((o) => o.call(null, login));
   }
 
+  /* callback метода onSendMessage для автоматического вызова в классе ChatControl */
   addGetMessageListeners(callback) { this.getMessageListeners.push(callback); }
 
+  /*
+  *  метод для отправки сообщения
+  *  передаёт введённое сообщение
+  *  в метод onSendMessage класса ChatControl
+  */
   onSendMessage(e) {
     e.preventDefault();
 
@@ -83,6 +95,11 @@ export default class chatDOM {
     this.getMessageListeners.forEach((o) => o.call(null, message));
   }
 
+  /*
+  *  метод для отрисовки сообщения
+  *  получает объект сообщения с name, text, date, class
+  *  вставляет сообщение в чат и прокручивает его вниз
+  */
   loadMessage(message) {
     const {
       name,
@@ -90,62 +107,85 @@ export default class chatDOM {
       date,
       classEl,
     } = message;
-    const messageEl = this.constructor.getHtmlMessage(name, text, date);
-    messageEl.classList.add(classEl);
-    this.chat.appendChild(messageEl);
-    this.chat.scrollTo(0, 9999); // где 0 - горизонтальная позиция, 9999 - вертикальная позиция
-  }
 
-  static getHtmlMessage(author, text, date) {
-    const html = document.createElement('div');
-    html.classList.add('message-container');
-    // html.classList.add('message-left');
-    // html.classList.add('message-left');
-    html.innerHTML = `
+    const messageEl = document.createElement('div');
+    messageEl.classList.add('message-container');
+    messageEl.classList.add(classEl);
+    messageEl.innerHTML = `
       <div class="message">
-        <div class="message-author">${author}, ${date}</div>
+        <div class="message-author">${name}, ${date}</div>
         <div class="message-text">${text}</div>
       </div>
     `;
-
-    return html;
+    this.chat.appendChild(messageEl);
+    this.chat.scrollTo(0, 9999);
   }
 
+  /*
+  *  метод для закрытия попапа
+  */
   popupClose() {
     this.popUp.classList.add('close');
   }
 
-  // текст в инпуте с ошибкой
+  /*
+  *  метод для вывода сообщения в placeholder внутри input
+  *  используется для вывода ошибки
+  *  принимает имя переменной и текст
+  */
   message(input, text) {
     this[input].placeholder = text;
   }
 
+  /*
+  *  метод для удаления текста ошибки и класса ошибки у инпута
+  *  срабатывает автоматически при фокусировке инпута
+  */
   onFocusClear(input) {
     this.message(input, '');
     this[input].classList.remove('error-add');
   }
 
-  // добавляем инпуту класс ошибки
+  /*
+  *  метод добавляет текст ошибки и класс ошибки инпута
+  */
   errorInputAdd(input, text) {
     this[input].value = '';
     this.message(input, text);
     this[input].classList.add('error-add');
   }
 
+  /*
+  *  метод для отрисовки участников чата
+  */
   loadUser(users, login) {
-    this.users.innerHTML = '';
+    this.users.innerHTML = ''; /* изанчально очищается список участников */
 
+    /* обход по массиву списка участников */
     for (let i = 0; i < users.length; i += 1) {
       const userEl = document.createElement('div');
       userEl.classList.add('user');
+
+      /* заменя имени участника на You, если участник это ВЫ */
       if (users[i] === login) {
         userEl.textContent = 'You';
       }
+
+      /* если участник не ВЫ, то используется имя участника */
       if (users[i] !== login) {
         userEl.textContent = users[i];
       }
 
       this.users.appendChild(userEl);
     }
+  }
+
+  /*
+  *  метод для удаления плашки загрузки и отображения попапа авторизации
+  *  запускается когда есть положительный ответ от сервера
+  */
+  backendLoaded() {
+    this.loading.classList.add('close');
+    this.popUpSubmit.classList.remove('close');
   }
 }

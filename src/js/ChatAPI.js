@@ -1,9 +1,9 @@
 export default class ChatAPI {
-  constructor(url) {
-    this.baseURL = url;
+  constructor(domainUrl) {
+    this.baseURL = `https://${domainUrl}`; /* url для связи с API */
   }
 
-  // опции для запроса
+  /* опции для запроса */
   static options(method, urlParam, body) {
     const value = {
       method,
@@ -14,7 +14,7 @@ export default class ChatAPI {
     return value;
   }
 
-  // создание апи запроса
+  /* создание апи запроса */
   async createRequest(options) {
     const { method, urlParam, body } = options;
 
@@ -35,14 +35,27 @@ export default class ChatAPI {
     return result;
   }
 
-  // логинизация
+  /*
+  *  метод отправляет POST API запрос
+  *  с параметром в строке method равному logining
+  *  передаёт тело в котором логин
+  */
   async logining(body) {
     // опции для запроса и запрос на сервер
     const options = this.constructor.options('POST', '?method=logining', body);
     const response = await this.createRequest(options);
 
-    // проверка, есть ли нужный объект
-    // const { login } = response;
+    return response;
+  }
+
+  /*
+  *  метод отправляет GET API запрос
+  *  без параметров и без тела
+  */
+  async checkServer() {
+    // опции для запроса и запрос на сервер
+    const options = this.constructor.options('GET', '');
+    const response = await this.createRequest(options);
 
     return response;
   }
