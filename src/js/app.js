@@ -6,7 +6,7 @@ import ChatAPI from './ChatAPI';
 
 // const urlString = 'http://localhost:7070';
 const url = 'https://ahj-hw8-1.onrender.com';
-const urlWS = 'ws://ahj-hw8-1.onrender.com';
+const urlWS = 'wss://ahj-hw8-1.onrender.com';
 // const urlString = `${url}:7070`;
 
 // элемент блока div в DOM
